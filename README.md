@@ -1,6 +1,6 @@
 # ItemDeclutter
 
-Fully configurable mod for unlocking ship upgrades/items on new runs.
+Small utility to organize dropped items on the ship.
 
 ## Installation
 
@@ -12,39 +12,15 @@ Install via r2modman.
 
 ## Features
 
-This mod gives you the ability to start game with:
-
-- Teleporter
-- Inverse teleporter
-- Loud horn
-- Signal translator
-- Green, hazmat and pajama suits
-
-You can also configure how many items to spawn:
-
-- Flashlights
-- Pro-flashlights
-- Walkie-talkies
-- Lockpickers
-- Extension Ladders
-- Radar boosters
-- Spray paints
-- Shovels
-- Stun grenades
-- Zap guns
+- Fully configurable dropping zones for each item type.
+- Configurable zone size, distance and amount.
 
 ## License
 
-This project is licensed under [MIT License](https://github.com/AndreyMrovol/LethalRichPresence/blob/main/LICENSE).
+This project is licensed under [MIT License](https://github.com/AndreyMrovol/LethalItemsDeclutter/blob/main/LICENSE).
 
 ## Credits
 
 This project uses [LethalCompanyTemplate](https://github.com/LethalCompany/LethalCompanyTemplate), licensed under [MIT License](https://github.com/LethalCompany/LethalCompanyTemplate/blob/main/LICENSE).
 
-Thanks to:
-
-- BatTeam for creating [LethalFashion](https://thunderstore.io/c/lethal-company/p/BatTeam/LethalFashion/)
-- Daran for creating [StartWithTeleporter](https://thunderstore.io/c/lethal-company/p/Daran/StartWithTeleporter/)
-- Lomeli for creating [StartingTeleporters](https://thunderstore.io/c/lethal-company/p/Lomeli/StartingTeleporters/)
-
-from which i got the idea for this mod.
+Thanks to the red cupboard on the ship: **_your absolute inability_** to hold any items between sessions inspired me to make this mod.
