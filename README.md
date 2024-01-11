@@ -17,7 +17,6 @@ Install via r2modman.
 
 ## Known issues
 
-- Vertical zones do not work
 - Tooltips are not updated correctly (picking up items)
 
 ## License
