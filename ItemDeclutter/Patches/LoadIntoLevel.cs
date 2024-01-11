@@ -21,7 +21,7 @@ namespace ItemDeclutter
   {
 
     internal static Dictionary<string, ConfigEntry<string>> ItemZoneConfig = new Dictionary<string, ConfigEntry<string>>();
-    internal static Dictionary<string, ConfigEntry<string>> ItemSizeConfig = new Dictionary<string, ConfigEntry<string>>();
+    // internal static Dictionary<string, ConfigEntry<string>> ItemSizeConfig = new Dictionary<string, ConfigEntry<string>>();
 
     [HarmonyPatch("LoadShipGrabbableItems")]
     [HarmonyPrefix]
@@ -35,7 +35,7 @@ namespace ItemDeclutter
       PopulateItemScrapConfig();
       TranslateDictionaries();
 
-      if (ConfigManager.ShouldItemsAssumeZones.Value) AssumeZones();
+      // if (ConfigManager.ShouldItemsAssumeZones.Value) AssumeZones();
 
     }
 
@@ -48,7 +48,7 @@ namespace ItemDeclutter
         if (item.isScrap) continue;
 
         ItemZoneConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(item.itemName, item.itemName, "", $"Set zone for {item.itemName}.");
-        ItemSizeConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
+        // ItemSizeConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
 
         Plugin.logger.LogMessage($"Added config entry for {item.itemName}.");
         Plugin.logger.LogMessage($"ItemZoneConfig[item.itemName]: {ItemZoneConfig[item.itemName].Value}");
@@ -59,7 +59,7 @@ namespace ItemDeclutter
         if (!item.isScrap) continue;
 
         ItemZoneConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(item.itemName, item.itemName, "", $"Set zone for {item.itemName}.");
-        ItemSizeConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
+        // ItemSizeConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
 
         Plugin.logger.LogMessage($"Added config entry for {item.itemName}.");
         Plugin.logger.LogMessage($"ItemZoneConfig[item.itemName]: {ItemZoneConfig[item.itemName].Value}");
