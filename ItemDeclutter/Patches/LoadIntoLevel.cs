@@ -97,6 +97,8 @@ namespace ItemDeclutter
       {
         var itemPosition = Positions.Zones[defaultZone.Value];
 
+        if (defaultZone.Key == "Default") continue;
+
         if (!Positions.Zones.ContainsKey(defaultZone.Value))
         {
           Plugin.logger.LogMessage($"Zone {defaultZone.Value} does not exist - skipping.");
