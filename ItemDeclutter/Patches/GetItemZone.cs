@@ -18,7 +18,7 @@ namespace ItemDeclutter
       var isTwoHanded = droppedObject.itemProperties.twoHanded;
       var itemValue = droppedObject.scrapValue;
 
-      if (isScrap)
+      if (isScrap && ConfigManager.ShouldItemsAssumeZones.Value)
       {
 
         if (isTwoHanded && ConfigManager.DivideOneTwoHanded.Value)
