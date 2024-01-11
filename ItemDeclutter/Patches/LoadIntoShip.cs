@@ -70,7 +70,7 @@ namespace ItemDeclutter
             var zonePosition = new Vector3(
               ZoneManagerConfig.ZoningStartX.Value + (ZoneManagerConfig.ZoneDistanceX.Value * zoneX),
               ZoneManagerConfig.ZoningStartY.Value + (ZoneManagerConfig.ZoneDistanceY.Value * zoneY),
-              ZoneManagerConfig.ZoningStartZ.Value + (ZoneManagerConfig.ZoneDistanceZ.Value * zoneZ)
+              ZoneManagerConfig.ZoningStartZ.Value + (ZoneManagerConfig.ZoneDistanceZ.Value * zoneZ * -1)
             );
 
             if (ZoneManagerConfig.LogCreatedZones.Value) Plugin.logger.LogInfo($"Created zone {zoneName} at {zonePosition.x}, {zonePosition.y}, {zonePosition.z}");
