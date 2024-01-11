@@ -21,6 +21,7 @@ namespace ItemDeclutter
   {
 
     internal static Dictionary<string, ConfigEntry<string>> ItemZoneConfig = new Dictionary<string, ConfigEntry<string>>();
+    internal static Dictionary<string, ConfigEntry<string>> ItemSizeConfig = new Dictionary<string, ConfigEntry<string>>();
 
     [HarmonyPatch("LoadShipGrabbableItems")]
     [HarmonyPrefix]
@@ -47,6 +48,8 @@ namespace ItemDeclutter
         if (item.isScrap) continue;
 
         ItemZoneConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(item.itemName, item.itemName, "", $"Set zone for {item.itemName}.");
+        ItemSizeConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
+
         Plugin.logger.LogMessage($"Added config entry for {item.itemName}.");
         Plugin.logger.LogMessage($"ItemZoneConfig[item.itemName]: {ItemZoneConfig[item.itemName].Value}");
       }
@@ -56,6 +59,8 @@ namespace ItemDeclutter
         if (!item.isScrap) continue;
 
         ItemZoneConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(item.itemName, item.itemName, "", $"Set zone for {item.itemName}.");
+        ItemSizeConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
+
         Plugin.logger.LogMessage($"Added config entry for {item.itemName}.");
         Plugin.logger.LogMessage($"ItemZoneConfig[item.itemName]: {ItemZoneConfig[item.itemName].Value}");
       }
@@ -88,11 +93,41 @@ namespace ItemDeclutter
     internal static void TranslateDictionaries()
     {
 
+      foreach (var defaultZone in Positions.DefaultZones)
+      {
+        var itemPosition = Positions.Zones[defaultZone.Value];
+
+        if (!Positions.Zones.ContainsKey(defaultZone.Value))
+        {
+          Plugin.logger.LogMessage($"Zone {defaultZone.Value} does not exist - skipping.");
+          continue;
+        }
+
+        Plugin.logger.LogMessage($"defaultZone: {defaultZone}, itemPosition: {itemPosition}");
+
+        Positions.PositionsDictionary.Add(defaultZone.Key, itemPosition);
+        Positions.ZoneAllocated.Add(defaultZone.Value, true);
+        Plugin.logger.LogMessage($"Added {defaultZone.Key} to PositionsDictionary with position {itemPosition.x}, {itemPosition.y}, {itemPosition.z}.");
+      }
+
       foreach (var item in ItemZoneConfig)
       {
         var itemZone = item.Value.Value;
 
         if (itemZone == null || itemZone == "") continue;
+        if (!Positions.Zones.ContainsKey(itemZone))
+        {
+          Plugin.logger.LogMessage($"Zone {itemZone} does not exist - skipping.");
+          continue;
+        }
+
+        if (Positions.PositionsDictionary.ContainsKey(item.Key))
+        {
+          Plugin.logger.LogMessage($"{item.Key} is already in the dictionary - changing default to configurated.");
+
+          Positions.PositionsDictionary.Remove(item.Key);
+          Positions.ZoneAllocated.Remove(itemZone);
+        }
 
         var itemPosition = Positions.Zones[itemZone];
 
@@ -101,17 +136,6 @@ namespace ItemDeclutter
         Positions.PositionsDictionary.Add(item.Key, itemPosition);
         Positions.ZoneAllocated.Add(itemZone, true);
         Plugin.logger.LogMessage($"Added {item.Key} to PositionsDictionary with position {itemPosition.x}, {itemPosition.y}, {itemPosition.z}.");
-      }
-
-      foreach (var defaultZone in Positions.DefaultZones)
-      {
-        var itemPosition = Positions.Zones[defaultZone.Value];
-
-        Plugin.logger.LogMessage($"defaultZone: {defaultZone}, itemPosition: {itemPosition}");
-
-        Positions.PositionsDictionary.Add(defaultZone.Key, itemPosition);
-        Positions.ZoneAllocated.Add(defaultZone.Value, true);
-        Plugin.logger.LogMessage($"Added {defaultZone.Key} to PositionsDictionary with position {itemPosition.x}, {itemPosition.y}, {itemPosition.z}.");
       }
 
     }
