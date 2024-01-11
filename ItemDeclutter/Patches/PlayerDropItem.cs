@@ -26,7 +26,14 @@ namespace ItemDeclutter
 
         Plugin.logger.LogInfo($"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z}");
 
+        if (!Positions.PositionsDictionary.ContainsKey(itemName)) return;
+
         var resolvedCoordinates = ItemZone.GetCoordinates(dropObject);
+
+        if (resolvedCoordinates == null)
+        {
+          return;
+        }
 
         Vector3 definedPosition = resolvedCoordinates;
 
