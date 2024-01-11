@@ -19,9 +19,6 @@ namespace ItemDeclutter
         {
             ConfigManager.Init(Config);
             ZoneManagerConfig.Init(new ConfigFile(Path.Combine(Paths.ConfigPath, "Declutter/DefineZones.cfg"), true));
-            // ItemZoneConfig.Init(new ConfigFile(Path.Combine(Paths.ConfigPath, "Declutter/Items.cfg"), true));
-
-            Logger.LogWarning(StartOfRound.Instance == null);
 
             logger = Logger;
             harmony.PatchAll();
