@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BepInEx.Configuration;
 using UnityEngine;
 
 namespace ItemDeclutter
@@ -20,31 +21,26 @@ namespace ItemDeclutter
 
     public static Dictionary<string, float> DroppedItemsYCoordinateDictionary = new() { };
 
-    public static Dictionary<string, Vector3> PositionsDictionary = new()
-    {
-      // {"ScrapItemValue", Zones["A306"]},
-
-      // {"Radar-booster", Zones["A001"]},
-      // {"Extension ladder", Zones["B004"]},
-
-      //   {"Flashlight", Zones["A006"]},
-      //   {"Pro-flashlight", Zones["A007"]},
-      //   {"Walkie-talkie", Zones["A008"]},
-
-      //   {"Shovel", Zones["A011"]},
-      //   {"Stun grenade", Zones["A015"]},
-      //   {"Zap gun", Zones["A017"]},
-
-
-      //   {"Spray paint", Zones["A025"]},
-    };
+    public static Dictionary<string, Vector3> PositionsDictionary = new() { };
 
     public static Dictionary<string, string> DefaultZones = new(){
       {"Default", "A000"},
+
       {"ScrapCheap", "A302"},
       {"ScrapExpensive", "A306"},
       {"ScrapTwohandedCheap", "A311"},
-      {"ScrapTwoHandedExpensive", "A318"}
+      {"ScrapTwoHandedExpensive", "A318"},
+
+      {"Shovel", "A000"},
+
+      {"Pro-flashlight", "A002"},
+      {"Walkie-talkie", "A003"},
+      {"Flashlight", "A004"},
+
+      {"Lockpicker", "A005"},
+
+      {"Jetpack", "D301"},
+      {"Extension ladder", "D001"},
     };
 
 
