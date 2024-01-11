@@ -17,7 +17,7 @@ namespace ItemDeclutter
 
         private void Awake()
         {
-            ConfigManager.Init(Config);
+            ConfigManager.Init(new ConfigFile(Path.Combine(Paths.ConfigPath, "Declutter/BaseConfig.cfg"), true));
             ZoneManagerConfig.Init(new ConfigFile(Path.Combine(Paths.ConfigPath, "Declutter/DefineZones.cfg"), true));
 
             logger = Logger;
