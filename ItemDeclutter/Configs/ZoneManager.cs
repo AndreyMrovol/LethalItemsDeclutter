@@ -40,7 +40,7 @@ public class ZoneManagerConfig
     ZoneDistanceZ = config.Bind("Distance between zones", "ZoneDistanceZ", 1f, "Distance between zones on Z axis (left -> right)");
 
     HowManyZonesX = config.Bind("How many zones to create", "HowManyZonesX", 40, "How many zones on X axis (entrance -> console)");
-    HowManyZonesY = config.Bind("How many zones to create", "HowManyZonesY", 3, "How many zones on Y axis (floor -> ceiling)");
+    HowManyZonesY = config.Bind("How many zones to create", "HowManyZonesY", 1, "How many zones on Y axis (floor -> ceiling)");
     HowManyZonesZ = config.Bind("How many zones to create", "HowManyZonesZ", 4, "How many zones on Z axis (left -> right)");
   }
 }
