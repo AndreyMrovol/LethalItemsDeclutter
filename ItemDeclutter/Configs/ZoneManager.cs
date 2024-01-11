@@ -35,12 +35,12 @@ public class ZoneManagerConfig
     ZoningStartY = config.Bind("Start Position", "ZoningStartY", 0.25f, "Start position on Y axis (floor -> ceiling)");
     ZoningStartZ = config.Bind("Start Position", "ZoningStartZ", -5f, "Start position on Z axis (left -> right)");
 
-    ZoneDistanceX = config.Bind("Distance between zones", "ZoneDistanceX", 0.35f, "Distance between zones on X axis (entrance -> console)");
+    ZoneDistanceX = config.Bind("Distance between zones", "ZoneDistanceX", 0.65f, "Distance between zones on X axis (entrance -> console)");
     ZoneDistanceY = config.Bind("Distance between zones", "ZoneDistanceY", 1.25f, "Distance between zones on Y axis (floor -> ceiling)");
     ZoneDistanceZ = config.Bind("Distance between zones", "ZoneDistanceZ", 1f, "Distance between zones on Z axis (left -> right)");
 
-    HowManyZonesX = config.Bind("How many zones to create", "HowManyZonesX", 40, "How many zones on X axis (entrance -> console)");
-    HowManyZonesY = config.Bind("How many zones to create", "HowManyZonesY", 1, "How many zones on Y axis (floor -> ceiling)");
+    HowManyZonesX = config.Bind("How many zones to create", "HowManyZonesX", 20, "How many zones on X axis (entrance -> console)");
+    HowManyZonesY = config.Bind("How many zones to create", "HowManyZonesY", 5, "How many zones on Y axis (floor -> ceiling)");
     HowManyZonesZ = config.Bind("How many zones to create", "HowManyZonesZ", 4, "How many zones on Z axis (left -> right)");
   }
 }
