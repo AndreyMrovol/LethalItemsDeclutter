@@ -15,6 +15,11 @@ Install via r2modman.
 - Fully configurable dropping zones for each item type.
 - Configurable zone size, distance and amount.
 
+## Known issues
+
+- Vertical zones do not work
+- Tooltips are not updated correctly (picking up items)
+
 ## License
 
 This project is licensed under [MIT License](https://github.com/AndreyMrovol/LethalItemsDeclutter/blob/main/LICENSE).
