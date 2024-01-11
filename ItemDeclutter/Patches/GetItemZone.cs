@@ -18,37 +18,37 @@ namespace ItemDeclutter
       var isTwoHanded = droppedObject.itemProperties.twoHanded;
       var itemValue = droppedObject.scrapValue;
 
-      if (isScrap && ConfigManager.ShouldItemsAssumeZones.Value)
-      {
+      // if (isScrap && ConfigManager.ShouldItemsAssumeZones.Value)
+      // {
 
-        if (isTwoHanded && ConfigManager.DivideOneTwoHanded.Value)
-        {
-          if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
-          {
-            return Positions.DefaultZones["ScrapTwoHandedExpensive"];
-          }
-          else
-          {
-            return Positions.DefaultZones["ScrapTwohandedCheap"];
+      //   if (isTwoHanded && ConfigManager.DivideOneTwoHanded.Value)
+      //   {
+      //     if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
+      //     {
+      //       return Positions.DefaultZones["ScrapTwoHandedExpensive"];
+      //     }
+      //     else
+      //     {
+      //       return Positions.DefaultZones["ScrapTwohandedCheap"];
 
-          }
-        }
-        else
-        {
-          if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
-          {
-            return Positions.DefaultZones["ScrapExpensive"];
-          }
-          else
-          {
-            return Positions.DefaultZones["ScrapCheap"];
+      //     }
+      //   }
+      //   else
+      //   {
+      //     if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
+      //     {
+      //       return Positions.DefaultZones["ScrapExpensive"];
+      //     }
+      //     else
+      //     {
+      //       return Positions.DefaultZones["ScrapCheap"];
 
-          }
-        }
+      //     }
+      //   }
 
 
 
-      }
+      // }
 
 
 
@@ -60,6 +60,11 @@ namespace ItemDeclutter
     public static Vector3 GetCoordinates(GrabbableObject droppedObject)
     {
       var resolvedZone = GetName(droppedObject);
+
+      if (resolvedZone == null)
+      {
+        return Vector3.zero;
+      }
 
       if (resolvedZone == true.ToString())
       {
