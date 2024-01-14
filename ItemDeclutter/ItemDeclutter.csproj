@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net46</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
         <AssemblyName>ItemDeclutter</AssemblyName>
         <Description>Declutter your ship</Description>
         <Version>0.0.1</Version>
@@ -15,7 +15,10 @@
         <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*"/>
         <PackageReference Include="LethalAPI.GameLibs" Version="45.1.0" />
         <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" IncludeAssets="compile" />
+
+        <PackageReference Include="Xilophor.LethalNetworkAPI" Version="1.*" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

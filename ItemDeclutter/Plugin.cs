@@ -23,6 +23,8 @@ namespace ItemDeclutter
             logger = Logger;
             harmony.PatchAll();
 
+            ConfigSync.Start();
+
             // Plugin startup logic
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
