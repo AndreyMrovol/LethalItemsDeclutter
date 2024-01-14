@@ -44,7 +44,7 @@ namespace ItemDeclutter
         if (Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName))
         {
           targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
-          Plugin.logger.LogInfo($"Updating {itemName} Y coordinate dictionary to {targetFloorPosition.y}");
+          Plugin.logger.LogInfo($"Updating {itemName} Y coordinate from dictionary: {targetFloorPosition.y}");
         }
 
         // consistent item rotation
