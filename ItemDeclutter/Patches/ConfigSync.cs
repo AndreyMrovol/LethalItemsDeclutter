@@ -83,6 +83,28 @@ namespace ItemDeclutter
       }
     }
 
+    public static void UpdateItemPositionData(GrabbableObject item)
+    {
+
+      if (StartOfRound.Instance.IsHost)
+      {
+        Plugin.logger.LogInfo($"Updating item position data");
+
+        var JsonSerialized = new PositionData
+        {
+          ItemName = item.itemProperties.itemName,
+          Position = Positions.PositionsDictionary[item.itemProperties.itemName]
+        };
+
+        sendItemPositionData.SendAllClients(JsonConvert.SerializeObject(JsonSerialized, Formatting.None, new JsonSerializerSettings
+        {
+          ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        }));
+        Plugin.logger.LogInfo($"Sending {item.itemProperties.itemName} data: {JsonSerialized}");
+      }
+
+    }
+
   }
 
 }

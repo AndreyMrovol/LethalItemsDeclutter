@@ -57,6 +57,7 @@ namespace ItemDeclutter
             dropObject.FallToGround();
             Positions.DroppedItemsYCoordinateDictionary[itemName] = originalCoordinates.y;
             Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName} is not in the Y coordinate dictionary - updating Y coordinate to {originalCoordinates.y} and adding to dictionary");
+            ConfigSync.UpdateItemPositionData(dropObject);
           }
 
         }
