@@ -28,6 +28,7 @@ namespace ItemDeclutter
         if (!Positions.PositionsDictionary.ContainsKey(itemName)) return;
 
         var resolvedCoordinates = ItemZone.GetCoordinates(dropObject);
+        var originalCoordinates = targetFloorPosition;
 
         if (resolvedCoordinates == null)
         {
@@ -40,10 +41,24 @@ namespace ItemDeclutter
 
         targetFloorPosition = definedPosition;
 
-        if (Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName))
+        if (ZoneManagerConfig.ZoningStartY.Value == targetFloorPosition.y)
         {
-          targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
-          Plugin.logger.LogInfo($"Updating {itemName} Y coordinate from dictionary: {targetFloorPosition.y}");
+          Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName}'s position is in the lowest zone - resolving Y coordinate");
+          bool isInYDictionary = Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName);
+
+          if (isInYDictionary)
+          {
+            Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName} is in the Y coordinate dictionary - updating Y coordinate to {Positions.DroppedItemsYCoordinateDictionary[itemName]}");
+            targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
+          }
+          else
+          {
+            targetFloorPosition.y = originalCoordinates.y;
+            dropObject.FallToGround();
+            Positions.DroppedItemsYCoordinateDictionary[itemName] = originalCoordinates.y;
+            Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName} is not in the Y coordinate dictionary - updating Y coordinate to {originalCoordinates.y} and adding to dictionary");
+          }
+
         }
 
         // consistent item rotation

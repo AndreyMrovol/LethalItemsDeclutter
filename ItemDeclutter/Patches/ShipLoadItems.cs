@@ -29,6 +29,9 @@ namespace ItemDeclutter
       {
         var itemsOfType = ItemsOnShip.Where(obj => obj.itemProperties.itemName == item.Key);
 
+        Plugin.logger.LogDebug($"Found {itemsOfType.Count()} items of type {item.Key}");
+        if (itemsOfType.Count() == 0) continue;
+
         foreach (var itemOfType in itemsOfType)
         {
           Vector3 moveItemToPosition = item.Value;
@@ -39,9 +42,15 @@ namespace ItemDeclutter
           itemOfType.isInShipRoom = true;
 
           // Plugin.logger.LogMessage($"Trying to move {item.Key} to {itemOfType.transform.localPosition.x}, {itemOfType.transform.localPosition.y}, {itemOfType.transform.localPosition.z}");
-          itemOfType.FallToGround();
+          // itemOfType.FallToGround();
 
-          Positions.DroppedItemsYCoordinateDictionary[item.Key] = itemOfType.targetFloorPosition.y;
+          if (ZoneManagerConfig.ZoningStartY.Value == moveItemToPosition.y)
+          {
+            itemOfType.FallToGround();
+            Positions.DroppedItemsYCoordinateDictionary[item.Key] = itemOfType.targetFloorPosition.y;
+            Plugin.logger.LogDebug($"{item.Key}'s position is in the lowest zone (on the floor) - updating Y coordinate dictionary to {itemOfType.targetFloorPosition.y}");
+          }
+
           // Plugin.logger.LogMessage($"Updating {item.Key} Y coordinate dictionary to {itemOfType.targetFloorPosition.y}");
           // Plugin.logger.LogDebug($"Dictionary checkup: {Positions.DroppedItemsYCoordinateDictionary[item.Key]}");
 
