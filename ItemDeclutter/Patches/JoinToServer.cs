@@ -17,7 +17,7 @@ namespace ItemDeclutter
 
     internal static Dictionary<string, LethalNetworkVariable<Vector3>> ItemZoneSynchronizedConfig = new Dictionary<string, LethalNetworkVariable<Vector3>>();
 
-    [HarmonyPatch("Start")]
+    [HarmonyPatch("PlayerLoadedClientRpc")]
     [HarmonyPostfix]
     internal static void PatchLogic()
     {
@@ -28,8 +28,6 @@ namespace ItemDeclutter
       if (isHost) return;
 
       Plugin.logger.LogInfo($"creating weird shit on client");
-      Plugin.logger.LogDebug($"{new LethalNetworkVariable<string>("test").Value}");
-      // Plugin.logger.LogDebug($"{new LethalNetworkVariable<string>("pro-flashlight").Value}");
 
       Positions.PositionsDictionary.Clear();
 
