@@ -24,6 +24,9 @@ namespace ItemDeclutter
       var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
       var ListClone = ItemsOnShip.ToList();
 
+      if (ListClone.Count() == 0) return null;
+      if (!Positions.PositionsDictionary.ContainsKey(itemName)) return null;
+
       ListClone.Do(item =>
         {
           if (item.playerHeldBy != null)
