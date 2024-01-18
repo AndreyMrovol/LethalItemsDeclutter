@@ -21,9 +21,21 @@ namespace ItemDeclutter
     {
       GameObject ship = GameObject.Find("/Environment/HangarShip");
 
-      var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName);
-      var count = ItemsOnShip.Count();
+      var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
+      var ListClone = ItemsOnShip.ToList();
 
+      ListClone.Do(item =>
+        {
+          if (item.playerHeldBy != null)
+          {
+            Plugin.logger.LogDebug($"Found a player holding {item.itemProperties.itemName}");
+            ItemsOnShip.Remove(item);
+          }
+        }
+      );
+
+
+      var count = ItemsOnShip.Count();
       Plugin.logger.LogInfo($"Found {count} {itemName} on ship");
 
       string tooltip = $"{itemName} (x{count}) \n Grab : [E]";

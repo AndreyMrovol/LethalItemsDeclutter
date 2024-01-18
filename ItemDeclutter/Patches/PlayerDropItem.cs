@@ -15,7 +15,6 @@ namespace ItemDeclutter
   internal class PlayerDropItemPatch
   {
 
-
     [HarmonyPatch("SetObjectAsNoLongerHeld")]
     [HarmonyPrefix]
     internal static void ItemDroppedOnShipPatch(bool droppedInElevator, bool droppedInShipRoom, ref Vector3 targetFloorPosition, ref GrabbableObject dropObject, ref int floorYRot)
@@ -49,11 +48,24 @@ namespace ItemDeclutter
 
         // consistent item rotation
         floorYRot = 0;
-
-        dropObject.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
-
       }
 
+    }
+
+    [HarmonyPatch(typeof(GrabbableObject))]
+    [HarmonyPatch("DiscardItemClientRpc")]
+    [HarmonyPostfix]
+    internal static void ItemDroppedOnShipPatchPostfix(GrabbableObject __instance)
+    {
+      if (__instance.isInShipRoom)
+      {
+        string itemName = __instance.itemProperties.itemName;
+        __instance.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
+      }
+      else
+      {
+        __instance.customGrabTooltip = null;
+      }
     }
 
 
