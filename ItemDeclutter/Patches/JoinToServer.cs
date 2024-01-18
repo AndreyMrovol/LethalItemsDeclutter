@@ -34,5 +34,12 @@ namespace ItemDeclutter
       ConfigSync.receiveItemPositionEvent.InvokeServer();
     }
 
+    // [HarmonyPatch("SetShipReadyToLand")]
+    // [HarmonyPostfix]
+    // internal static void Logic()
+    // {
+    //   PatchLogic();
+    // }
+
   }
 }
