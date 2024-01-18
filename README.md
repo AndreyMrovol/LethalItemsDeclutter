@@ -19,13 +19,9 @@ Install via r2modman.
 
 ## Showcase
 
-Items being dropped and organized on the ship.
-<video width="480" controls>
+Items being dropped and organized on the ship [(Video)](https://i.imgur.com/yHooIdp.mp4).
 
-  <source src="https://github.com/AndreyMrovol/LethalItemsDeclutter/raw/main/Showcase/quickuglydemo.mp4" type="video/mp4">
-</video>
-
-Items in their default positions.
+Items in their default positions:
 ![](https://raw.githubusercontent.com/AndreyMrovol/LethalItemsDeclutter/main/Showcase/defaults.jpg)
 ![](https://raw.githubusercontent.com/AndreyMrovol/LethalItemsDeclutter/main/Showcase/defaults-wide.jpg)
 
