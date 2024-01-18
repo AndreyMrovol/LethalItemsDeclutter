@@ -12,12 +12,26 @@ Install via r2modman.
 
 ## Features
 
-- Fully configurable dropping zones for each item type.
-- Configurable zone size, distance and amount.
+- Automatically organizes dropped items on the ship.
+- All items/zones are configurable via config files.
+- All zones are synchronized with host.
+- Supports modded items.
 
-## Known issues
+## Showcase
 
-- Tooltips are not updated correctly (picking up items)
+Items being dropped and organized on the ship.
+<video width="480" controls>
+
+  <source src="https://github.com/AndreyMrovol/LethalItemsDeclutter/raw/main/Showcase/quickuglydemo.mp4" type="video/mp4">
+</video>
+
+Items in their default positions.
+![](https://raw.githubusercontent.com/AndreyMrovol/LethalItemsDeclutter/main/Showcase/defaults.jpg)
+![](https://raw.githubusercontent.com/AndreyMrovol/LethalItemsDeclutter/main/Showcase/defaults-wide.jpg)
+
+## Configuration
+
+Please visit [wiki page](https://github.com/AndreyMrovol/LethalItemsDeclutter/wiki) to learn more.
 
 ## License
 
