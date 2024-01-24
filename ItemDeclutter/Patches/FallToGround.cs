@@ -29,11 +29,6 @@ namespace ItemDeclutter
 
       if (__instance == null) return true;
       if (__instance.transform.parent == null) return true;
-      // if (__instance.customGrabTooltip != null) return true;
-
-      Plugin.logger.LogDebug($"transformparent: {__instance.transform.parent}.");
-      Plugin.logger.LogDebug($"parent: {__instance.parentObject}.");
-
 
       if (__instance.transform.parent.name == "HangarShip")
       {
