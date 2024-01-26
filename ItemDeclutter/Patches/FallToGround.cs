@@ -26,9 +26,10 @@ namespace ItemDeclutter
 
       Plugin.logger.LogDebug($"FallToGroundPatchLogic called for {__instance.itemProperties.itemName}.");
 
-
       if (__instance == null) return true;
       if (__instance.transform.parent == null) return true;
+
+      Plugin.logger.LogDebug($"Transform parent name: {__instance.transform.parent.name}");
 
       if (__instance.transform.parent.name == "HangarShip")
       {
