@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,6 +38,7 @@ namespace ItemDeclutter
 
       // if (ConfigManager.ShouldItemsAssumeZones.Value) AssumeZones();
 
+      ConfigSync.SetNetworkedConfig();
     }
 
     internal static void PopulateItemScrapConfig()
