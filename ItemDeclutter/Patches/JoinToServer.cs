@@ -17,7 +17,7 @@ namespace ItemDeclutter
 
     internal static Dictionary<string, LethalNetworkVariable<Vector3>> ItemZoneSynchronizedConfig = new Dictionary<string, LethalNetworkVariable<Vector3>>();
 
-    [HarmonyPatch("PlayerLoadedClientRpc")]
+    [HarmonyPatch("Start")]
     [HarmonyPostfix]
     internal static void PatchLogic()
     {
