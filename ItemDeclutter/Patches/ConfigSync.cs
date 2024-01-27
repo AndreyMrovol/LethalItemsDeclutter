@@ -56,7 +56,7 @@ namespace ItemDeclutter
       }
 
       ConfigManager.IsInitialized = true;
-      ShipResolveItems.Patch();
+      // ShipResolveItems.Patch();
     }
 
     private static void ItemPositionRequest(ulong clientId)
