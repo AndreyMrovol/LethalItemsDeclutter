@@ -54,9 +54,6 @@ namespace ItemDeclutter
         Plugin.logger.LogInfo($"Deserialized: {item.ItemName} - {item.Position}");
         Positions.PositionsDictionary[item.ItemName] = item.Position;
       }
-
-      ConfigManager.IsInitialized = true;
-      // ShipResolveItems.Patch();
     }
 
     private static void ItemPositionRequest(ulong clientId)
@@ -87,6 +84,8 @@ namespace ItemDeclutter
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
           });
           Plugin.logger.LogInfo($"Setting networked config: {PositionList}");
+
+      GameNetworkManager.Instance.currentLobby?.SetData("ItemDeclutterConfig", synchronizedConfig.Value);
     }
 
     public static List<PositionData> GetItemsPositionData(){
