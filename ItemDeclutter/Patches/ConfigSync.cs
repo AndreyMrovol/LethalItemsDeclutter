@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using LethalNetworkAPI;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -21,24 +23,40 @@ namespace ItemDeclutter
     public static LethalServerMessage<string> sendItemPositionData = new("itemPositionData");
     public static LethalClientMessage<string> receiveItemPositionData = new("itemPositionData");
 
+    public static LethalServerMessage<string> sendItemLocalPosition = new("itemLocalPosition");
+    public static LethalClientMessage<string> receiveItemLocalPosition = new("itemLocalPosition");
+
     public static LethalServerEvent sendItemPositionEvent = new("itemPositionEvent");
     public static LethalClientEvent receiveItemPositionEvent = new("itemPositionEvent");
+
+    public static LethalNetworkVariable<string> synchronizedConfig = new("synchronizedConfig");
 
 
     public static void Start()
     {
-      receiveItemPositionData.OnReceived += MessageReceivedFromServer;
+      // receiveItemPositionData.OnReceived += MessageReceivedFromServer;
       sendItemPositionEvent.OnReceived += ItemPositionRequest;
+
+      synchronizedConfig.OnValueChanged += MessageReceivedFromServer;
     }
 
     private static void MessageReceivedFromServer(string message)
     {
+
+      if(StartOfRound.Instance.IsHost) return;
+
       Plugin.logger.LogInfo($"Message received from server: {message}");
 
-      var JsonDeserialized = JsonConvert.DeserializeObject<PositionData>(message);
-      Plugin.logger.LogInfo($"Deserialized: {JsonDeserialized.ItemName} - {JsonDeserialized.Position}");
+      var JsonDeserialized = JsonConvert.DeserializeObject<List<PositionData>>(message);
 
-      Positions.PositionsDictionary[JsonDeserialized.ItemName] = JsonDeserialized.Position;
+      foreach (var item in JsonDeserialized)
+      {
+        Plugin.logger.LogInfo($"Deserialized: {item.ItemName} - {item.Position}");
+        Positions.PositionsDictionary[item.ItemName] = item.Position;
+      }
+
+      ConfigManager.IsInitialized = true;
+      ShipResolveItems.Patch();
     }
 
     private static void ItemPositionRequest(ulong clientId)
@@ -52,9 +70,27 @@ namespace ItemDeclutter
 
     public static void SendItemsPositionData(ulong clientId)
     {
-      if (StartOfRound.Instance.IsHost)
-      {
-        Plugin.logger.LogInfo($"Sending item position data to clients");
+      List<PositionData> PositionList = GetItemsPositionData();
+
+      sendItemPositionData.SendClient(JsonConvert.SerializeObject(PositionList, Formatting.None, new JsonSerializerSettings
+          {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+          }), clientId);
+          Plugin.logger.LogInfo($"Sending data: {PositionList}");
+    }
+
+    public static void SetNetworkedConfig(){
+      List<PositionData> PositionList = GetItemsPositionData();
+
+      synchronizedConfig.Value = JsonConvert.SerializeObject(PositionList, Formatting.None, new JsonSerializerSettings
+          {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+          });
+          Plugin.logger.LogInfo($"Setting networked config: {PositionList}");
+    }
+
+    public static List<PositionData> GetItemsPositionData(){
+      List<PositionData> PositionList = new List<PositionData>();
 
         foreach (var key in Positions.PositionsDictionary.Keys)
         {
@@ -72,15 +108,30 @@ namespace ItemDeclutter
             Position = entry
           };
 
+          Plugin.logger.LogInfo($"Serialized: {JsonSerialized.ItemName} - {JsonSerialized.Position}");
+          PositionList.Add(JsonSerialized);
+      }
 
-          sendItemPositionData.SendClient(JsonConvert.SerializeObject(JsonSerialized, Formatting.None, new JsonSerializerSettings
+      return PositionList;
+    }
+
+    public static void DeserializeConfig(string serialized){
+      if(serialized == "" || serialized == null) return;
+
+      var JsonDeserialized = JsonConvert.DeserializeObject<List<PositionData>>(serialized);
+
+      foreach (var item in JsonDeserialized)
+      {
+        Plugin.logger.LogInfo($"Deserialized: {item.ItemName} - {item.Position}");
+        Positions.PositionsDictionary[item.ItemName] = item.Position;
+      }
+    }
+
+    public static string GetSerializedConfig(){
+      return JsonConvert.SerializeObject(GetItemsPositionData(), Formatting.None, new JsonSerializerSettings
           {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-          }), clientId);
-          Plugin.logger.LogInfo($"Sending {key} data: {JsonSerialized}");
-        }
-
-      }
+          });
     }
 
     public static void UpdateItemPositionData(GrabbableObject item)
