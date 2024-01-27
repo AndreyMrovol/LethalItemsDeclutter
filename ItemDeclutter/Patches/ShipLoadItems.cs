@@ -15,7 +15,7 @@ namespace ItemDeclutter
 {
 
   [HarmonyPatch(typeof(StartOfRound))]
-  internal class ItemStackTooltipPatch
+  internal class ShipLoadItems
   {
 
     [HarmonyPatch("LoadShipGrabbableItems")]
