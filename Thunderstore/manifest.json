@@ -1,6 +1,6 @@
 {
 	"name": "ItemDeclutter",
-	"version_number": "0.4.2",
+	"version_number": "0.4.4",
 	"website_url": "https://github.com/AndreyMrovol/LethalItemsDeclutter",
 	"description": "Small utility to organize dropped items on the ship.",
 	"dependencies": ["BepInEx-BepInExPack-5.4.2100", "xilophor-LethalNetworkAPI-2.1.0"]

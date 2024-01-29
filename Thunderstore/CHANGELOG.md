@@ -40,3 +40,13 @@ Initial release
 # 0.4.2
 
 - upgraded to Xilophor's LethalNetworkAPI v2.1.0
+
+# 0.4.3
+
+- fixed issues with mod not activating
+- fixed issues with mod not syncing config
+- fixed tooltips not applying correctly sometimes
+
+# 0.4.4
+
+- fixed Y coordinates not being synced with host
