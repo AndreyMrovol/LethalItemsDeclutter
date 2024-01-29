@@ -20,11 +20,11 @@ namespace ItemDeclutter
   internal class ConfigSync
   {
 
-    public static LethalServerMessage<string> sendItemPositionData = new("itemPositionData");
-    public static LethalClientMessage<string> receiveItemPositionData = new("itemPositionData");
+    public static LethalServerMessage<string> sendItemConfig = new("configData");
+    public static LethalClientMessage<string> receiveItemConfig = new("configData");
 
-    public static LethalServerMessage<string> sendItemLocalPosition = new("itemLocalPosition");
-    public static LethalClientMessage<string> receiveItemLocalPosition = new("itemLocalPosition");
+    public static LethalServerMessage<string> sendItemPosition = new("itemPositionData");
+    public static LethalClientMessage<string> receiveItemPosition = new("itemPositionData");
 
     public static LethalServerEvent sendItemPositionEvent = new("itemPositionEvent");
     public static LethalClientEvent receiveItemPositionEvent = new("itemPositionEvent");
@@ -34,10 +34,9 @@ namespace ItemDeclutter
 
     public static void Start()
     {
-      // receiveItemPositionData.OnReceived += MessageReceivedFromServer;
       sendItemPositionEvent.OnReceived += ItemPositionRequest;
-
       synchronizedConfig.OnValueChanged += MessageReceivedFromServer;
+      receiveItemPosition.OnReceived += ItemPositionReceived;
     }
 
     private static void MessageReceivedFromServer(string message)
@@ -45,7 +44,7 @@ namespace ItemDeclutter
 
       if(StartOfRound.Instance.IsHost) return;
 
-      Plugin.logger.LogInfo($"Message received from server: {message}");
+      Plugin.logger.LogInfo($"Config received from server: {message}");
 
       var JsonDeserialized = JsonConvert.DeserializeObject<List<PositionData>>(message);
 
@@ -54,6 +53,16 @@ namespace ItemDeclutter
         Plugin.logger.LogInfo($"Deserialized: {item.ItemName} - {item.Position}");
         Positions.PositionsDictionary[item.ItemName] = item.Position;
       }
+    }
+
+    private static void ItemPositionReceived(string message){
+
+      if(StartOfRound.Instance.IsHost) return;
+      Plugin.logger.LogInfo($"Item settings received from server: {message}");
+
+      var JsonDeserialized = JsonConvert.DeserializeObject<PositionData>(message);
+
+      Positions.PositionsDictionary[JsonDeserialized.ItemName] = JsonDeserialized.Position;
     }
 
     private static void ItemPositionRequest(ulong clientId)
@@ -69,7 +78,7 @@ namespace ItemDeclutter
     {
       List<PositionData> PositionList = GetItemsPositionData();
 
-      sendItemPositionData.SendClient(JsonConvert.SerializeObject(PositionList, Formatting.None, new JsonSerializerSettings
+      sendItemConfig.SendClient(JsonConvert.SerializeObject(PositionList, Formatting.None, new JsonSerializerSettings
           {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
           }), clientId);
@@ -146,7 +155,7 @@ namespace ItemDeclutter
           Position = Positions.PositionsDictionary[item.itemProperties.itemName]
         };
 
-        sendItemPositionData.SendAllClients(JsonConvert.SerializeObject(JsonSerialized, Formatting.None, new JsonSerializerSettings
+        sendItemPosition.SendAllClients(JsonConvert.SerializeObject(JsonSerialized, Formatting.None, new JsonSerializerSettings
         {
           ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         }));
