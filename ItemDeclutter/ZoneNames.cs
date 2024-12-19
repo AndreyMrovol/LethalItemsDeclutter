@@ -11,6 +11,7 @@ namespace ItemDeclutter
 {
 	public class ZoneNames
 	{
-		public static string[] zoneYNames = ["A", "B", "C", "D", "E", "F"];
+		[Obsolete]
+		public static string[] zoneYNames => Defaults.zoneYNames;
 	}
 }
