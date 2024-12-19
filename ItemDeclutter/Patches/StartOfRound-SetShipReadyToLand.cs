@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using LethalNetworkAPI;
-using Newtonsoft.Json;
 using UnityEngine;
 
-namespace ItemDeclutter
+namespace ItemDeclutter.Patches
 {
 	[HarmonyPatch(typeof(StartOfRound))]
 	class SetShipReadyToLand
@@ -26,7 +23,7 @@ namespace ItemDeclutter
 				if (itemsOfType.Count() == 0)
 					continue;
 
-				ItemStackTooltip.UpdateAllTooltips(item.Key);
+				TooltipHelper.UpdateAllTooltips(item.Key);
 			}
 		}
 	}

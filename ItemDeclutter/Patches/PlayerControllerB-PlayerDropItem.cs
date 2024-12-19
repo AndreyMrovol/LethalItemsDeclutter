@@ -8,7 +8,7 @@ using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace ItemDeclutter
+namespace ItemDeclutter.Patches
 {
 	[HarmonyPatch(typeof(PlayerControllerB))]
 	internal class PlayerDropItemPatch
@@ -16,7 +16,6 @@ namespace ItemDeclutter
 		[HarmonyPatch("SetObjectAsNoLongerHeld")]
 		[HarmonyPrefix]
 		internal static void ItemDroppedOnShipPatch(
-			bool droppedInElevator,
 			bool droppedInShipRoom,
 			ref Vector3 targetFloorPosition,
 			ref GrabbableObject dropObject,
@@ -87,7 +86,7 @@ namespace ItemDeclutter
 			if (__instance.isInShipRoom)
 			{
 				string itemName = __instance.itemProperties.itemName;
-				__instance.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
+				__instance.customGrabTooltip = TooltipHelper.GetTooltip(itemName);
 			}
 			else
 			{

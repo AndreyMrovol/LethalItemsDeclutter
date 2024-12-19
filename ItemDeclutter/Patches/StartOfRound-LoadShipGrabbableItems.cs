@@ -1,17 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using GameNetcodeStuff;
 using HarmonyLib;
-using Unity.Netcode;
 using UnityEngine;
 
-namespace ItemDeclutter
+namespace ItemDeclutter.Patches
 {
 	[HarmonyPatch(typeof(StartOfRound))]
 	internal class ShipLoadItems
@@ -58,7 +49,7 @@ namespace ItemDeclutter
 					// Plugin.logger.LogDebug($"Floor position: {itemOfType.targetFloorPosition.x}, {itemOfType.targetFloorPosition.y}, {itemOfType.targetFloorPosition.z}");
 				}
 
-				ItemStackTooltip.UpdateAllTooltips(item.Key);
+				TooltipHelper.UpdateAllTooltips(item.Key);
 			}
 		}
 	}

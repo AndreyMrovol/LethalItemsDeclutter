@@ -1,17 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using GameNetcodeStuff;
 using HarmonyLib;
-using Unity.Netcode;
-using UnityEngine;
 
-namespace ItemDeclutter
+namespace ItemDeclutter.Patches
 {
 	[HarmonyPatch(typeof(GrabbableObject))]
 	internal class FallToGroundPatch
@@ -22,49 +11,55 @@ namespace ItemDeclutter
 		{
 			// Harmony bool patching - returning true stops prefix and executes the original, returning false stops prefix and skips the original
 
-			Plugin.logger.LogDebug($"FallToGroundPatchLogic called for {__instance.itemProperties.itemName}.");
+			Plugin.DebugLogger.LogDebug($"FallToGroundPatchLogic called for {__instance.itemProperties.itemName}.");
 
 			if (__instance == null)
+			{
 				return true;
+			}
 			if (__instance.transform.parent == null)
+			{
 				return true;
+			}
 
-			Plugin.logger.LogDebug($"Transform parent name: {__instance.transform.parent.name}");
+			Plugin.DebugLogger.LogDebug($"Transform parent name: {__instance.transform.parent.name}");
 
 			if (__instance.transform.parent.name == "HangarShip")
 			{
 				var resolvedZone = ItemZone.GetName(__instance);
-				Plugin.logger.LogDebug($"Resolved zone for {__instance.itemProperties.itemName} to {resolvedZone}");
+				Plugin.DebugLogger.LogDebug($"Resolved zone for {__instance.itemProperties.itemName} to {resolvedZone}");
 				if (resolvedZone == null)
+				{
 					return true;
+				}
 
 				if (resolvedZone == true.ToString())
 				{
-					Plugin.logger.LogDebug($"{__instance.itemProperties.itemName} is in the dictionary - zone {resolvedZone}");
+					Plugin.DebugLogger.LogDebug($"{__instance.itemProperties.itemName} is in the dictionary - zone {resolvedZone}");
 				}
 				else
 				{
-					Plugin.logger.LogDebug(
+					Plugin.DebugLogger.LogDebug(
 						$"{__instance.itemProperties.itemName} is not in the dictionary - checking if {resolvedZone} is a valid zone name."
 					);
 
 					if (Positions.Zones.ContainsKey(resolvedZone))
 					{
-						Plugin.logger.LogDebug(
+						Plugin.DebugLogger.LogDebug(
 							$"{resolvedZone} is a valid zone name - adding {__instance.itemProperties.itemName} to the dictionary."
 						);
 						Positions.PositionsDictionary[__instance.itemProperties.itemName] = Positions.Zones[resolvedZone];
 					}
 					else
 					{
-						Plugin.logger.LogDebug($"{resolvedZone} is not a valid zone name.");
+						Plugin.DebugLogger.LogDebug($"{resolvedZone} is not a valid zone name.");
 						return true;
 					}
 				}
 
 				if (ZoneManagerConfig.ZoningStartY.Value != __instance.transform.localPosition.y)
 				{
-					Plugin.logger.LogDebug($"{__instance.itemProperties.itemName}'s position is not on the floor.");
+					Plugin.DebugLogger.LogDebug($"{__instance.itemProperties.itemName}'s position is not on the floor.");
 					__instance.targetFloorPosition = Positions.PositionsDictionary[__instance.itemProperties.itemName];
 				}
 				else
@@ -76,7 +71,7 @@ namespace ItemDeclutter
 			}
 			else
 			{
-				Plugin.logger.LogMessage($"{__instance.itemProperties.itemName} is not on the ship. - calling original method.");
+				Plugin.DebugLogger.LogMessage($"{__instance.itemProperties.itemName} is not on the ship. - calling original method.");
 				return true;
 			}
 		}

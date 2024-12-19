@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
 using Unity.Netcode;
-using UnityEngine;
 
-namespace ItemDeclutter
+namespace ItemDeclutter.Patches
 {
 	[HarmonyPatch(typeof(PlayerControllerB))]
 	internal class PlayerPickupItem
@@ -17,19 +11,22 @@ namespace ItemDeclutter
 		[HarmonyPostfix]
 		internal static void GrabObjectPatch(bool grabValidated, ref NetworkObjectReference grabbedObject)
 		{
-			NetworkObject networkObject;
-			grabbedObject.TryGet(out networkObject);
+			grabbedObject.TryGet(out NetworkObject networkObject);
 
 			if (networkObject == null)
+			{
 				return;
+			}
 
 			GrabbableObject grabbableObject = networkObject.GetComponent<GrabbableObject>();
 
 			if (grabbableObject == null)
+			{
 				return;
+			}
 
 			string itemName = grabbableObject.itemProperties.itemName;
-			grabbableObject.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
+			grabbableObject.customGrabTooltip = TooltipHelper.GetTooltip(itemName);
 		}
 	}
 }

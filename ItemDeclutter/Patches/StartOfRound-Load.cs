@@ -1,25 +1,13 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.Logging;
-using GameNetcodeStuff;
 using HarmonyLib;
-using Newtonsoft.Json;
-using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.UIElements.Collections;
 
-namespace ItemDeclutter
+namespace ItemDeclutter.Patches
 {
 	[HarmonyPatch(typeof(StartOfRound))]
 	internal class LoadIntoShipPatch
 	{
-		internal static Dictionary<string, ConfigEntry<string>> ItemZoneConfig = new Dictionary<string, ConfigEntry<string>>();
+		internal static Dictionary<string, ConfigEntry<string>> ItemZoneConfig = [];
 
 		// internal static Dictionary<string, ConfigEntry<string>> ItemSizeConfig = new Dictionary<string, ConfigEntry<string>>();
 
@@ -51,11 +39,13 @@ namespace ItemDeclutter
 
 				string defaultZone = "";
 
-				if (Positions.DefaultZones.ContainsKey(item.itemName))
+				if (Defaults.DefaultZones.ContainsKey(item.itemName))
 				{
-					Plugin.logger.LogMessage($"{item.itemName} has a default zone : {Positions.DefaultZones[item.itemName]}");
-					defaultZone = Positions.DefaultZones[item.itemName];
+					Plugin.logger.LogMessage($"{item.itemName} has a default zone : {Defaults.DefaultZones[item.itemName]}");
+					defaultZone = Defaults.DefaultZones[item.itemName];
 				}
+
+				Plugin.logger.LogDebug($"Adding config entry for {item.itemName}.");
 
 				ItemZoneConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(
 					item.itemName,
@@ -64,31 +54,6 @@ namespace ItemDeclutter
 					$"Set zone for {item.itemName}."
 				);
 				// ItemSizeConfig[item.itemName] = Plugin.ItemZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
-
-				Plugin.logger.LogMessage($"Added config entry for {item.itemName}.");
-				Plugin.logger.LogMessage($"ItemZoneConfig[item.itemName]: {ItemZoneConfig[item.itemName].Value}");
-			}
-
-			foreach (Item item in allItemsList)
-			{
-				if (!item.isScrap)
-					continue;
-
-				string defaultZone = "";
-
-				if (Positions.DefaultZones.ContainsKey(item.itemName))
-				{
-					Plugin.logger.LogMessage($"{item.itemName} has a default zone : {Positions.DefaultZones[item.itemName]}");
-					defaultZone = Positions.DefaultZones[item.itemName];
-				}
-
-				ItemZoneConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(
-					item.itemName,
-					item.itemName,
-					defaultZone,
-					$"Set zone for {item.itemName}."
-				);
-				// ItemSizeConfig[item.itemName] = Plugin.ScrapZoneConfig.Bind(item.itemName, "Size", "small", $"Set size of {item.itemName} (small/medium/large).");
 
 				Plugin.logger.LogMessage($"Added config entry for {item.itemName}.");
 				Plugin.logger.LogMessage($"ItemZoneConfig[item.itemName]: {ItemZoneConfig[item.itemName].Value}");
@@ -103,8 +68,8 @@ namespace ItemDeclutter
 				{
 					for (int zoneZ = 0; zoneZ < ZoneManagerConfig.HowManyZonesZ.Value; zoneZ++)
 					{
-						var zoneName = $"{ZoneNames.zoneYNames[zoneY]}{zoneZ.ToString("0")}{zoneX.ToString("00")}";
-						var zonePosition = new Vector3(
+						var zoneName = $"{Defaults.zoneYNames[zoneY]}{zoneZ.ToString("0")}{zoneX.ToString("00")}";
+						var zonePosition = new UnityEngine.Vector3(
 							ZoneManagerConfig.ZoningStartX.Value + (ZoneManagerConfig.ZoneDistanceX.Value * zoneX),
 							ZoneManagerConfig.ZoningStartY.Value + (ZoneManagerConfig.ZoneDistanceY.Value * zoneY),
 							ZoneManagerConfig.ZoningStartZ.Value + (ZoneManagerConfig.ZoneDistanceZ.Value * zoneZ * -1)
@@ -121,7 +86,7 @@ namespace ItemDeclutter
 
 		internal static void TranslateDictionaries()
 		{
-			// foreach (var defaultZone in Positions.DefaultZones)
+			// foreach (var defaultZone in Defaults.DefaultZones)
 			// {
 			//   var itemPosition = Positions.Zones[defaultZone.Value];
 

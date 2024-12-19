@@ -13,8 +13,28 @@ using UnityEngine;
 
 namespace ItemDeclutter
 {
-	class ItemStackTooltip
+	class TooltipHelper
 	{
+		public static string GetTooltip(string itemName)
+		{
+			GameObject ship = GameObject.Find("/Environment/HangarShip");
+
+			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
+			var ListClone = ItemsOnShip.ToList();
+
+			return GetTooltip(ListClone, itemName);
+		}
+
+		public static string GetTooltip(List<GrabbableObject> ItemsOnShip, string itemName)
+		{
+			var count = ItemsOnShip.Count();
+			Plugin.logger.LogInfo($"Found {count} {itemName} on ship");
+
+			string tooltip = $"{itemName} (x{count}) \n Grab : [E]";
+
+			return tooltip;
+		}
+
 		public static string UpdateAllTooltips(string itemName)
 		{
 			GameObject ship = GameObject.Find("/Environment/HangarShip");
@@ -23,9 +43,14 @@ namespace ItemDeclutter
 			var ListClone = ItemsOnShip.ToList();
 
 			if (ListClone.Count() == 0)
+			{
 				return null;
+			}
+
 			if (!Positions.PositionsDictionary.ContainsKey(itemName))
+			{
 				return null;
+			}
 
 			ListClone.Do(item =>
 			{
@@ -36,10 +61,7 @@ namespace ItemDeclutter
 				}
 			});
 
-			var count = ItemsOnShip.Count();
-			Plugin.logger.LogInfo($"Found {count} {itemName} on ship");
-
-			string tooltip = $"{itemName} (x{count}) \n Grab : [E]";
+			string tooltip = GetTooltip(ItemsOnShip, itemName);
 
 			foreach (var item in ItemsOnShip)
 			{
@@ -47,6 +69,11 @@ namespace ItemDeclutter
 			}
 
 			return tooltip;
+		}
+
+		public static string UpdateAllTooltips(GrabbableObject grabbable)
+		{
+			return UpdateAllTooltips(grabbable.itemProperties.itemName);
 		}
 	}
 }
