@@ -2,9 +2,25 @@ using System.Numerics;
 
 namespace ItemDeclutter.Definitions
 {
-	public class ItemConfig
+	public interface IItemConfig
+	{
+		public string ObjectName { get; }
+		public UnityEngine.Vector3 Coordinates { get; }
+	}
+
+	public class ItemConfigBase : IItemConfig
+	{
+		public virtual string ObjectName { get; set; }
+		public virtual UnityEngine.Vector3 Coordinates { get; set; }
+	}
+
+	public class ItemConfig : ItemConfigBase
 	{
 		public GrabbableObject GrabbableObject { get; set; }
+		public override string ObjectName
+		{
+			get { return GrabbableObject.itemProperties.itemName; }
+		}
 
 		private static ZoneConfigHandler ZoneConfig;
 
@@ -13,7 +29,7 @@ namespace ItemDeclutter.Definitions
 			get { return ZoneConfig.DefaultValue; }
 		}
 
-		public UnityEngine.Vector3 Coordinates
+		public override UnityEngine.Vector3 Coordinates
 		{
 			get { return ZoneConfig.Value; }
 		}
