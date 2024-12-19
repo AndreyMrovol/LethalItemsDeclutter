@@ -1,90 +1,98 @@
-using BepInEx.Logging;
-using GameNetcodeStuff;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BepInEx.Logging;
+using GameNetcodeStuff;
+using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace ItemDeclutter
 {
+	[HarmonyPatch(typeof(PlayerControllerB))]
+	internal class PlayerDropItemPatch
+	{
+		[HarmonyPatch("SetObjectAsNoLongerHeld")]
+		[HarmonyPrefix]
+		internal static void ItemDroppedOnShipPatch(
+			bool droppedInElevator,
+			bool droppedInShipRoom,
+			ref Vector3 targetFloorPosition,
+			ref GrabbableObject dropObject,
+			ref int floorYRot
+		)
+		{
+			if (droppedInShipRoom)
+			{
+				string itemName = dropObject.itemProperties.itemName;
 
-  [HarmonyPatch(typeof(PlayerControllerB))]
-  internal class PlayerDropItemPatch
-  {
+				Plugin.logger.LogInfo(
+					$"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z}"
+				);
 
-    [HarmonyPatch("SetObjectAsNoLongerHeld")]
-    [HarmonyPrefix]
-    internal static void ItemDroppedOnShipPatch(bool droppedInElevator, bool droppedInShipRoom, ref Vector3 targetFloorPosition, ref GrabbableObject dropObject, ref int floorYRot)
-    {
-      if (droppedInShipRoom)
-      {
-        string itemName = dropObject.itemProperties.itemName;
+				if (!Positions.PositionsDictionary.ContainsKey(itemName))
+					return;
 
-        Plugin.logger.LogInfo($"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z}");
+				var resolvedCoordinates = ItemZone.GetCoordinates(dropObject);
+				var originalCoordinates = targetFloorPosition;
 
-        if (!Positions.PositionsDictionary.ContainsKey(itemName)) return;
+				if (resolvedCoordinates == null)
+				{
+					return;
+				}
 
-        var resolvedCoordinates = ItemZone.GetCoordinates(dropObject);
-        var originalCoordinates = targetFloorPosition;
+				Vector3 definedPosition = resolvedCoordinates;
 
-        if (resolvedCoordinates == null)
-        {
-          return;
-        }
+				Plugin.logger.LogInfo(
+					$"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z} - updating drop position to {definedPosition.x}, {definedPosition.y}, {definedPosition.z}"
+				);
 
-        Vector3 definedPosition = resolvedCoordinates;
+				targetFloorPosition = definedPosition;
 
-        Plugin.logger.LogInfo($"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z} - updating drop position to {definedPosition.x}, {definedPosition.y}, {definedPosition.z}");
+				if (ZoneManagerConfig.ZoningStartY.Value == targetFloorPosition.y)
+				{
+					Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName}'s position is in the lowest zone - resolving Y coordinate");
+					bool isInYDictionary = Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName);
 
-        targetFloorPosition = definedPosition;
+					if (isInYDictionary)
+					{
+						Plugin.logger.LogDebug(
+							$"{dropObject.itemProperties.itemName} is in the Y coordinate dictionary - updating Y coordinate to {Positions.DroppedItemsYCoordinateDictionary[itemName]}"
+						);
+						targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
+					}
+					else
+					{
+						targetFloorPosition.y = originalCoordinates.y;
+						dropObject.FallToGround();
+						Positions.DroppedItemsYCoordinateDictionary[itemName] = originalCoordinates.y;
+						Plugin.logger.LogDebug(
+							$"{dropObject.itemProperties.itemName} is not in the Y coordinate dictionary - updating Y coordinate to {originalCoordinates.y} and adding to dictionary"
+						);
+						ConfigSync.UpdateItemPositionData(dropObject);
+					}
+				}
 
-        if (ZoneManagerConfig.ZoningStartY.Value == targetFloorPosition.y)
-        {
-          Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName}'s position is in the lowest zone - resolving Y coordinate");
-          bool isInYDictionary = Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName);
+				// consistent item rotation
+				floorYRot = 0;
+			}
+		}
 
-          if (isInYDictionary)
-          {
-            Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName} is in the Y coordinate dictionary - updating Y coordinate to {Positions.DroppedItemsYCoordinateDictionary[itemName]}");
-            targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
-          }
-          else
-          {
-            targetFloorPosition.y = originalCoordinates.y;
-            dropObject.FallToGround();
-            Positions.DroppedItemsYCoordinateDictionary[itemName] = originalCoordinates.y;
-            Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName} is not in the Y coordinate dictionary - updating Y coordinate to {originalCoordinates.y} and adding to dictionary");
-            ConfigSync.UpdateItemPositionData(dropObject);
-          }
-
-        }
-
-        // consistent item rotation
-        floorYRot = 0;
-      }
-
-    }
-
-    [HarmonyPatch(typeof(GrabbableObject))]
-    [HarmonyPatch("DiscardItemClientRpc")]
-    [HarmonyPostfix]
-    internal static void ItemDroppedOnShipPatchPostfix(GrabbableObject __instance)
-    {
-      if (__instance.isInShipRoom)
-      {
-        string itemName = __instance.itemProperties.itemName;
-        __instance.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
-      }
-      else
-      {
-        __instance.customGrabTooltip = null;
-      }
-    }
-
-
-  }
-
+		[HarmonyPatch(typeof(GrabbableObject))]
+		[HarmonyPatch("DiscardItemClientRpc")]
+		[HarmonyPostfix]
+		internal static void ItemDroppedOnShipPatchPostfix(GrabbableObject __instance)
+		{
+			if (__instance.isInShipRoom)
+			{
+				string itemName = __instance.itemProperties.itemName;
+				__instance.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
+			}
+			else
+			{
+				__instance.customGrabTooltip = null;
+			}
+		}
+	}
 }

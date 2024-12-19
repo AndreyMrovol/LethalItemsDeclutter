@@ -3,82 +3,76 @@ using UnityEngine;
 
 namespace ItemDeclutter
 {
+	public static class ItemZone
+	{
+		public static string GetName(GrabbableObject droppedObject)
+		{
+			if (Positions.PositionsDictionary.ContainsKey(droppedObject.itemProperties.itemName))
+			{
+				return true.ToString();
+			}
 
-  public static class ItemZone
-  {
-    public static string GetName(GrabbableObject droppedObject)
-    {
+			var isScrap = droppedObject.itemProperties.isScrap;
+			var isTwoHanded = droppedObject.itemProperties.twoHanded;
+			var itemValue = droppedObject.scrapValue;
 
-      if (Positions.PositionsDictionary.ContainsKey(droppedObject.itemProperties.itemName))
-      {
-        return true.ToString();
-      }
+			// if (isScrap && ConfigManager.ShouldItemsAssumeZones.Value)
+			// {
 
-      var isScrap = droppedObject.itemProperties.isScrap;
-      var isTwoHanded = droppedObject.itemProperties.twoHanded;
-      var itemValue = droppedObject.scrapValue;
+			//   if (isTwoHanded && ConfigManager.DivideOneTwoHanded.Value)
+			//   {
+			//     if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
+			//     {
+			//       return Positions.DefaultZones["ScrapTwoHandedExpensive"];
+			//     }
+			//     else
+			//     {
+			//       return Positions.DefaultZones["ScrapTwohandedCheap"];
 
-      // if (isScrap && ConfigManager.ShouldItemsAssumeZones.Value)
-      // {
+			//     }
+			//   }
+			//   else
+			//   {
+			//     if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
+			//     {
+			//       return Positions.DefaultZones["ScrapExpensive"];
+			//     }
+			//     else
+			//     {
+			//       return Positions.DefaultZones["ScrapCheap"];
 
-      //   if (isTwoHanded && ConfigManager.DivideOneTwoHanded.Value)
-      //   {
-      //     if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
-      //     {
-      //       return Positions.DefaultZones["ScrapTwoHandedExpensive"];
-      //     }
-      //     else
-      //     {
-      //       return Positions.DefaultZones["ScrapTwohandedCheap"];
-
-      //     }
-      //   }
-      //   else
-      //   {
-      //     if (itemValue >= ConfigManager.ExpensiveValue.Value && ConfigManager.DivideCheapExpensive.Value)
-      //     {
-      //       return Positions.DefaultZones["ScrapExpensive"];
-      //     }
-      //     else
-      //     {
-      //       return Positions.DefaultZones["ScrapCheap"];
-
-      //     }
-      //   }
+			//     }
+			//   }
 
 
 
-      // }
+			// }
 
 
 
-      // "not found - something went so horribly wrong it's not even funny";
-      return null;
-    }
+			// "not found - something went so horribly wrong it's not even funny";
+			return null;
+		}
 
+		public static Vector3 GetCoordinates(GrabbableObject droppedObject)
+		{
+			var resolvedZone = GetName(droppedObject);
 
-    public static Vector3 GetCoordinates(GrabbableObject droppedObject)
-    {
-      var resolvedZone = GetName(droppedObject);
+			if (resolvedZone == null)
+			{
+				return Vector3.zero;
+			}
 
-      if (resolvedZone == null)
-      {
-        return Vector3.zero;
-      }
+			if (resolvedZone == true.ToString())
+			{
+				return Positions.PositionsDictionary[droppedObject.itemProperties.itemName];
+			}
+			else if (Positions.Zones.ContainsKey(resolvedZone))
+			{
+				return Positions.Zones[resolvedZone];
+			}
 
-      if (resolvedZone == true.ToString())
-      {
-        return Positions.PositionsDictionary[droppedObject.itemProperties.itemName];
-      }
-      else if (Positions.Zones.ContainsKey(resolvedZone))
-      {
-        return Positions.Zones[resolvedZone];
-      }
-
-      return Positions.Zones["Default"];
-
-    }
-
-  }
-
+			return Positions.Zones["Default"];
+		}
+	}
 }

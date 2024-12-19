@@ -1,15 +1,10 @@
-using BepInEx.Logging;
-using GameNetcodeStuff;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using BepInEx.Logging;
+using GameNetcodeStuff;
+using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace ItemDeclutter
-{
-
-
-
-}
+namespace ItemDeclutter { }

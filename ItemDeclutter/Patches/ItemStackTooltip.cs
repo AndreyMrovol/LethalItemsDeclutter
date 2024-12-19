@@ -1,55 +1,52 @@
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using GameNetcodeStuff;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using GameNetcodeStuff;
+using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace ItemDeclutter
 {
+	class ItemStackTooltip
+	{
+		public static string UpdateAllTooltips(string itemName)
+		{
+			GameObject ship = GameObject.Find("/Environment/HangarShip");
 
-  class ItemStackTooltip
-  {
+			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
+			var ListClone = ItemsOnShip.ToList();
 
-    public static string UpdateAllTooltips(string itemName)
-    {
-      GameObject ship = GameObject.Find("/Environment/HangarShip");
+			if (ListClone.Count() == 0)
+				return null;
+			if (!Positions.PositionsDictionary.ContainsKey(itemName))
+				return null;
 
-      var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
-      var ListClone = ItemsOnShip.ToList();
+			ListClone.Do(item =>
+			{
+				if (item.playerHeldBy != null)
+				{
+					Plugin.logger.LogDebug($"Found a player holding {item.itemProperties.itemName}");
+					ItemsOnShip.Remove(item);
+				}
+			});
 
-      if (ListClone.Count() == 0) return null;
-      if (!Positions.PositionsDictionary.ContainsKey(itemName)) return null;
+			var count = ItemsOnShip.Count();
+			Plugin.logger.LogInfo($"Found {count} {itemName} on ship");
 
-      ListClone.Do(item =>
-        {
-          if (item.playerHeldBy != null)
-          {
-            Plugin.logger.LogDebug($"Found a player holding {item.itemProperties.itemName}");
-            ItemsOnShip.Remove(item);
-          }
-        }
-      );
+			string tooltip = $"{itemName} (x{count}) \n Grab : [E]";
 
+			foreach (var item in ItemsOnShip)
+			{
+				item.customGrabTooltip = tooltip;
+			}
 
-      var count = ItemsOnShip.Count();
-      Plugin.logger.LogInfo($"Found {count} {itemName} on ship");
-
-      string tooltip = $"{itemName} (x{count}) \n Grab : [E]";
-
-      foreach (var item in ItemsOnShip)
-      {
-        item.customGrabTooltip = tooltip;
-      }
-
-      return tooltip;
-    }
-
-  }
+			return tooltip;
+		}
+	}
 }

@@ -1,38 +1,35 @@
-using BepInEx.Logging;
-using GameNetcodeStuff;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BepInEx.Logging;
+using GameNetcodeStuff;
+using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace ItemDeclutter
 {
+	[HarmonyPatch(typeof(PlayerControllerB))]
+	internal class PlayerPickupItem
+	{
+		[HarmonyPatch("GrabObjectClientRpc")]
+		[HarmonyPostfix]
+		internal static void GrabObjectPatch(bool grabValidated, ref NetworkObjectReference grabbedObject)
+		{
+			NetworkObject networkObject;
+			grabbedObject.TryGet(out networkObject);
 
-  [HarmonyPatch(typeof(PlayerControllerB))]
-  internal class PlayerPickupItem
-  {
+			if (networkObject == null)
+				return;
 
-    [HarmonyPatch("GrabObjectClientRpc")]
-    [HarmonyPostfix]
-    internal static void GrabObjectPatch(bool grabValidated, ref NetworkObjectReference grabbedObject)
-    {
+			GrabbableObject grabbableObject = networkObject.GetComponent<GrabbableObject>();
 
-      NetworkObject networkObject;
-      grabbedObject.TryGet(out networkObject);
+			if (grabbableObject == null)
+				return;
 
-      if (networkObject == null) return;
-
-      GrabbableObject grabbableObject = networkObject.GetComponent<GrabbableObject>();
-
-      if (grabbableObject == null) return;
-
-      string itemName = grabbableObject.itemProperties.itemName;
-      grabbableObject.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
-
-    }
-
-  }
+			string itemName = grabbableObject.itemProperties.itemName;
+			grabbableObject.customGrabTooltip = ItemStackTooltip.UpdateAllTooltips(itemName);
+		}
+	}
 }
