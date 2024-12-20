@@ -20,7 +20,7 @@ namespace ItemDeclutter
 		public static GameObject DeclutterSyncPrefab;
 		public static NetworkManager networkManager;
 		public static bool networkHasStarted = false;
-		private static DeclutterSync _instance;
+		internal static DeclutterSync _instance;
 		private static List<GameObject> queuedNetworkPrefabs = [];
 
 		public static DeclutterSync Instance
@@ -44,37 +44,41 @@ namespace ItemDeclutter
 		{
 			base.OnNetworkSpawn();
 			InitializeInstance();
-			// WeathersSynced.OnValueChanged += Networking.WeatherLevelData.WeathersReceived;
-			// EffectsSynced.OnValueChanged += Networking.WeatherEffectData.EffectsReceived;
-
 			ItemZones.OnValueChanged += Networking.ItemZones.ItemZonesReceived;
+
+			Plugin.logger.LogDebug("DeclutterSync OnNetworkSpawn");
 		}
 
-		// public void SetNewOnHost(Dictionary<string, LevelWeatherType> weathers)
-		// {
-		// 	if (!StartOfRound.Instance.IsHost)
-		// 	{
-		// 		Plugin.logger.LogDebug("Cannot set weathers, not a host!");
-		// 		return;
-		// 	}
+		public void SetNewOnHost(Dictionary<string, Vector3> ItemLocations)
+		{
+			Plugin.logger.LogDebug("Setting new item zones on host");
 
-		// 	var weatherData = weathers
-		// 		.Select(kvp => new DeclutterSyncData { Weather = kvp.Value, LevelName = new FixedString64Bytes(kvp.Key) })
-		// 		.ToArray();
+			if (!StartOfRound.Instance.IsHost)
+			{
+				Plugin.logger.LogDebug("Cannot set item zones, not a host!");
+				return;
+			}
 
-		// 	Weather = weatherData;
-		// }
+			ItemZoneData[] itemZones = ItemLocations
+				.Select(x => new ItemZoneData
+				{
+					ObjectName = x.Key,
+					XCoordinate = x.Value.x,
+					YCoordinate = x.Value.y,
+					ZCoordinate = x.Value.z
+				})
+				.ToArray();
 
-		// public void SetWeatherEffectOnHost(LevelWeatherType weatherType)
-		// {
-		// 	if (!StartOfRound.Instance.IsHost)
-		// 	{
-		// 		Plugin.logger.LogDebug("Cannot set effects, not a host!");
-		// 		return;
-		// 	}
+			Plugin.logger.LogDebug(
+				JsonConvert.SerializeObject(
+					itemZones,
+					Formatting.None,
+					new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }
+				)
+			);
 
-		// 	Effects = new WeatherEffectSyncData { WeatherType = weatherType };
-		// }
+			ItemZones.Set(new ItemZoneDataWrapper { ItemZonesData = itemZones });
+		}
 
 		#region Prefab registration
 

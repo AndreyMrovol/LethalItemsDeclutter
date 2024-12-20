@@ -1,5 +1,7 @@
 using System.Linq;
 using HarmonyLib;
+using ItemDeclutter.Definitions;
+using ItemDeclutter.Managers;
 using UnityEngine;
 
 namespace ItemDeclutter.Patches
@@ -14,15 +16,17 @@ namespace ItemDeclutter.Patches
 			GameObject ship = GameObject.Find("/Environment/HangarShip");
 			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>();
 
-			foreach (var item in Positions.PositionsDictionary)
+			foreach (var item in PositionManager.ItemCoordinates)
 			{
 				var itemsOfType = ItemsOnShip.Where(obj => obj.itemProperties.itemName == item.Key);
 
 				Plugin.logger.LogDebug($"Found {itemsOfType.Count()} items of type {item.Key}");
 				if (itemsOfType.Count() == 0)
+				{
 					continue;
+				}
 
-				foreach (var itemOfType in itemsOfType)
+				foreach (GrabbableObject itemOfType in itemsOfType)
 				{
 					Vector3 moveItemToPosition = item.Value;
 
@@ -31,22 +35,14 @@ namespace ItemDeclutter.Patches
 
 					itemOfType.isInShipRoom = true;
 
-					// Plugin.logger.LogMessage($"Trying to move {item.Key} to {itemOfType.transform.localPosition.x}, {itemOfType.transform.localPosition.y}, {itemOfType.transform.localPosition.z}");
-					// itemOfType.FallToGround();
-
-					if (ZoneManagerConfig.ZoningStartY.Value == moveItemToPosition.y)
-					{
-						itemOfType.FallToGround();
-						Positions.DroppedItemsYCoordinateDictionary[item.Key] = itemOfType.targetFloorPosition.y;
-						Plugin.logger.LogDebug(
-							$"{item.Key}'s position is in the lowest zone (on the floor) - updating Y coordinate dictionary to {itemOfType.targetFloorPosition.y}"
-						);
-					}
-
-					// Plugin.logger.LogMessage($"Updating {item.Key} Y coordinate dictionary to {itemOfType.targetFloorPosition.y}");
-					// Plugin.logger.LogDebug($"Dictionary checkup: {Positions.DroppedItemsYCoordinateDictionary[item.Key]}");
-
-					// Plugin.logger.LogDebug($"Floor position: {itemOfType.targetFloorPosition.x}, {itemOfType.targetFloorPosition.y}, {itemOfType.targetFloorPosition.z}");
+					// if (ZoneManagerConfig.ZoningStartY.Value == moveItemToPosition.y)
+					// {
+					// 	itemOfType.FallToGround();
+					// 	Positions.DroppedItemsYCoordinateDictionary[item.Key] = itemOfType.targetFloorPosition.y;
+					// 	Plugin.logger.LogDebug(
+					// 		$"{item.Key}'s position is in the lowest zone (on the floor) - updating Y coordinate dictionary to {itemOfType.targetFloorPosition.y}"
+					// 	);
+					// }
 				}
 
 				TooltipHelper.UpdateAllTooltips(item.Key);

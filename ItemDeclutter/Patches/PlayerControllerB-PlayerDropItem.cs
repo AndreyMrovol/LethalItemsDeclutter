@@ -5,6 +5,8 @@ using System.Reflection;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using ItemDeclutter.Definitions;
+using ItemDeclutter.Managers;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -24,24 +26,24 @@ namespace ItemDeclutter.Patches
 		{
 			if (droppedInShipRoom)
 			{
-				string itemName = dropObject.itemProperties.itemName;
+				GrabbableObject grabbableObject = dropObject;
+
+				string itemName = grabbableObject.itemProperties.itemName;
 
 				Plugin.logger.LogInfo(
 					$"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z}"
 				);
 
-				if (!Positions.PositionsDictionary.ContainsKey(itemName))
-					return;
-
-				var resolvedCoordinates = ItemZone.GetCoordinates(dropObject);
-				var originalCoordinates = targetFloorPosition;
-
-				if (resolvedCoordinates == null)
-				{
-					return;
-				}
+				Vector3 resolvedCoordinates = PositionManager.GetItemCoordinates(itemName);
+				Vector3 originalCoordinates = targetFloorPosition;
 
 				Vector3 definedPosition = resolvedCoordinates;
+
+				if (resolvedCoordinates == new Vector3(0, 0, 0) || resolvedCoordinates == null)
+				{
+					Plugin.logger.LogInfo($"Coordinates for {itemName} are null");
+					return;
+				}
 
 				Plugin.logger.LogInfo(
 					$"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z} - updating drop position to {definedPosition.x}, {definedPosition.y}, {definedPosition.z}"
@@ -49,29 +51,29 @@ namespace ItemDeclutter.Patches
 
 				targetFloorPosition = definedPosition;
 
-				if (ZoneManagerConfig.ZoningStartY.Value == targetFloorPosition.y)
-				{
-					Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName}'s position is in the lowest zone - resolving Y coordinate");
-					bool isInYDictionary = Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName);
+				// if (ZoneManagerConfig.ZoningStartY.Value == targetFloorPosition.y)
+				// {
+				// 	Plugin.logger.LogDebug($"{dropObject.itemProperties.itemName}'s position is in the lowest zone - resolving Y coordinate");
+				// 	bool isInYDictionary = Positions.DroppedItemsYCoordinateDictionary.ContainsKey(itemName);
 
-					if (isInYDictionary)
-					{
-						Plugin.logger.LogDebug(
-							$"{dropObject.itemProperties.itemName} is in the Y coordinate dictionary - updating Y coordinate to {Positions.DroppedItemsYCoordinateDictionary[itemName]}"
-						);
-						targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
-					}
-					else
-					{
-						targetFloorPosition.y = originalCoordinates.y;
-						dropObject.FallToGround();
-						Positions.DroppedItemsYCoordinateDictionary[itemName] = originalCoordinates.y;
-						Plugin.logger.LogDebug(
-							$"{dropObject.itemProperties.itemName} is not in the Y coordinate dictionary - updating Y coordinate to {originalCoordinates.y} and adding to dictionary"
-						);
-						ConfigSync.UpdateItemPositionData(dropObject);
-					}
-				}
+				// 	if (isInYDictionary)
+				// 	{
+				// 		Plugin.logger.LogDebug(
+				// 			$"{dropObject.itemProperties.itemName} is in the Y coordinate dictionary - updating Y coordinate to {Positions.DroppedItemsYCoordinateDictionary[itemName]}"
+				// 		);
+				// 		targetFloorPosition.y = Positions.DroppedItemsYCoordinateDictionary[itemName];
+				// 	}
+				// 	else
+				// 	{
+				// 		targetFloorPosition.y = originalCoordinates.y;
+				// 		dropObject.FallToGround();
+				// 		Positions.DroppedItemsYCoordinateDictionary[itemName] = originalCoordinates.y;
+				// 		Plugin.logger.LogDebug(
+				// 			$"{dropObject.itemProperties.itemName} is not in the Y coordinate dictionary - updating Y coordinate to {originalCoordinates.y} and adding to dictionary"
+				// 		);
+				// 		ConfigSync.UpdateItemPositionData(dropObject);
+				// 	}
+				// }
 
 				// consistent item rotation
 				floorYRot = 0;

@@ -5,19 +5,23 @@ namespace ItemDeclutter.Definitions
 {
 	public struct ItemZoneData : INetworkSerializable
 	{
-		public string ObjectName;
-		public UnityEngine.Vector3 Coordinates;
+		public FixedString64Bytes ObjectName;
+		public float XCoordinate;
+		public float YCoordinate;
+		public float ZCoordinate;
 
 		public void NetworkSerialize<T>(BufferSerializer<T> serializer)
 			where T : IReaderWriter
 		{
 			serializer.SerializeValue(ref ObjectName);
-			serializer.SerializeValue(ref Coordinates);
+			serializer.SerializeValue(ref XCoordinate);
+			serializer.SerializeValue(ref YCoordinate);
+			serializer.SerializeValue(ref ZCoordinate);
 		}
 
 		public override readonly string ToString()
 		{
-			return $"ObjectName: {ObjectName}, Coordinates: {Coordinates}";
+			return $"ObjectName: {ObjectName}, Coordinates: {XCoordinate}/{YCoordinate}/{ZCoordinate}";
 		}
 	}
 

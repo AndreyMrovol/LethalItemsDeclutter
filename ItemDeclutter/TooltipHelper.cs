@@ -8,6 +8,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using ItemDeclutter.Managers;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -19,7 +20,10 @@ namespace ItemDeclutter
 		{
 			GameObject ship = GameObject.Find("/Environment/HangarShip");
 
-			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
+			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>()
+				.Where(obj => obj.itemProperties.itemName == itemName)
+				.Where(obj => !obj.heldByPlayerOnServer)
+				.ToList();
 			var ListClone = ItemsOnShip.ToList();
 
 			return GetTooltip(ListClone, itemName);
@@ -39,7 +43,10 @@ namespace ItemDeclutter
 		{
 			GameObject ship = GameObject.Find("/Environment/HangarShip");
 
-			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>().Where(obj => obj.itemProperties.itemName == itemName).ToList();
+			var ItemsOnShip = ship.GetComponentsInChildren<GrabbableObject>()
+				.Where(obj => obj.itemProperties.itemName == itemName)
+				.Where(obj => !obj.heldByPlayerOnServer)
+				.ToList();
 			var ListClone = ItemsOnShip.ToList();
 
 			if (ListClone.Count() == 0)
@@ -47,7 +54,7 @@ namespace ItemDeclutter
 				return null;
 			}
 
-			if (!Positions.PositionsDictionary.ContainsKey(itemName))
+			if (!PositionManager.IsItemDefined(itemName))
 			{
 				return null;
 			}

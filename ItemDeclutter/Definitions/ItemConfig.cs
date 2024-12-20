@@ -8,28 +8,21 @@ namespace ItemDeclutter.Definitions
 		public UnityEngine.Vector3 Coordinates { get; }
 	}
 
-	public class ItemConfigBase : IItemConfig
+	public class ItemConfig : IItemConfig
 	{
-		public virtual string ObjectName { get; set; }
-		public virtual UnityEngine.Vector3 Coordinates { get; set; }
-	}
-
-	public class ItemConfig : ItemConfigBase
-	{
-		public GrabbableObject GrabbableObject { get; set; }
-		public override string ObjectName
+		public Item Item { get; set; }
+		public string ObjectName
 		{
-			get { return GrabbableObject.itemProperties.itemName; }
+			get { return Item.itemName; }
 		}
 
-		private static ZoneConfigHandler ZoneConfig;
-
+		public ZoneConfigHandler ZoneConfig;
 		public string Zone
 		{
-			get { return ZoneConfig.DefaultValue; }
+			get { return ZoneConfig.RawValue; }
 		}
 
-		public override UnityEngine.Vector3 Coordinates
+		public UnityEngine.Vector3 Coordinates
 		{
 			get { return ZoneConfig.Value; }
 		}
@@ -37,5 +30,10 @@ namespace ItemDeclutter.Definitions
 		public float XCoordinate => Coordinates.x;
 		public float YCoordinate => Coordinates.y;
 		public float ZCoordinate => Coordinates.z;
+
+		public override string ToString()
+		{
+			return $"{ObjectName} ({(Item.isScrap ? "Scrap" : "Item")})";
+		}
 	}
 }
