@@ -45,6 +45,12 @@ namespace ItemDeclutter.Patches
 					return;
 				}
 
+				if (resolvedCoordinates.y == ConfigManager.ZoningStartY.Value)
+				{
+					Plugin.logger.LogInfo($"{itemName}'s position is in the lowest zone - changing Y coordinate to {originalCoordinates.y}");
+					definedPosition.y = originalCoordinates.y;
+				}
+
 				Plugin.logger.LogInfo(
 					$"Dropped {itemName} in ship room at {targetFloorPosition.x}, {targetFloorPosition.y}, {targetFloorPosition.z} - updating drop position to {definedPosition.x}, {definedPosition.y}, {definedPosition.z}"
 				);
