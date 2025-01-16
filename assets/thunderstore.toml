@@ -28,9 +28,5 @@ target = "/"
 source = "../LICENSE.md"
 target = "/"
 
-[[build.copy]]
-source = "../lib/OldLLLLib.dll"
-target = "/"
-
 [publish]
 communities = [ "lethal-company", ]
